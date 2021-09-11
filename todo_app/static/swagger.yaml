@@ -1,0 +1,200 @@
+openapi: 3.0.0
+info:
+  description: Todo App
+  version: 1.0.0
+  title: API Specification
+
+tags:
+  - name: Users
+    description: User APIs
+  - name: Todo Lists
+    description: Todo Lists APIs
+  - name: Todo Items
+    description: Todo Items APIs
+  
+paths:
+  
+  /api/v1/users/signup:
+    post:
+      tags:
+        - Users
+      summary: Add Users(Signup)
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request or Invalid parameters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/signupRequest'
+            example:
+              firstname: Dhruva
+              lastname: Dave
+              email: dhruva@gmail.com
+              phone: 555-555-1234
+              password: 123dd
+  
+  /api/v1/users/login:
+    post:
+      tags:
+        - Users
+      summary: Login
+      responses:
+        '200':
+          description: User Logged In
+        '400':
+          description: Bad request or Invalid parameters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginRequest'
+            example:
+              email: dhruva@gmail.com
+              password: 123dd
+  
+
+  /api/v1/todo/list:
+    post:
+      tags:
+        - Todo Lists
+      summary: Create Todo List
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request or Invalid parameters
+        '500':
+          description: Internal server error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/todolistRequest'
+            example:
+              name: My First List
+  
+  /api/v1/todo/item:
+    post:
+      tags:
+        - Todo Items
+      summary: Create Todo Item
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request or Invalid parameters
+        '500':
+          description: Internal server error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/todoitemRequest'
+            example:
+              title: My First Item
+              description: Description for todo items
+              status: todo
+
+  /api/v1/todo/item/assign:
+    post:
+      tags:
+        - Todo Items
+      summary: Assign Todo Item to user
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request or Invalid parameters
+        '500':
+          description: Internal server error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/assigntodoitemRequest'
+            example:
+              todo_item_id: 1
+              assign_to: [1,2,3]
+
+    get:
+      tags:
+        - Todo Items
+      parameters:
+        - name: page_no
+          in: query
+          required: false
+          description: The starting page number
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          required: false
+          description: No. of records to fetch/page
+          schema:
+            type: string
+      summary: Get assigned todo Item to user
+      responses:
+        '200':
+          description: Todoitems Fetched Successfully
+        '400':
+          description: Bad request or Invalid parameters
+        '500':
+          description: Internal server error
+  
+
+
+components:
+  schemas:
+    signupRequest:
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+    
+    loginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    
+    todolistRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        
+    todoitemRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+
+    assigntodoitemRequest:
+      type: object
+      properties:
+        todo_item_id:
+          type: integer
+        assign_to:
+          type: list

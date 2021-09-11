@@ -10,7 +10,7 @@
 ## Project Setup
 ---------------
 - Setup
-` git clone https://github.com/DhruvaDave/.git`
+` git clone https://github.com/DhruvaDave/flask-todo-app.git`
 ` pip3 install -r requirements.txt`
 - Run project
     * Run app

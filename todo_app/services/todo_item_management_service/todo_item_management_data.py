@@ -46,7 +46,8 @@ class TodoItemData:
             "start_date": form.start_date.data if form.start_date else None,
             "due_date": form.due_date.data if form.due_date else None,
             "status": form.status.data,
-            "assign_to": form.assign_to.data if form.assign_to else None
+            "assign_to": form.assign_to.data if form.assign_to else None,
+            "comment": form.comment.data if form.comment.data else None
         }
         logging.info(f'Todo item data {data}')
         if form.user_todo_list_id.data:
@@ -80,8 +81,9 @@ class TodoItemData:
                                 constants.BAD_REQUEST, 400)
 
         try:
-            todo_item = TodoItemRepo.fetch_todo_item(form.todo_item_id.data, form.assign_to.data)
+            todo_item = TodoItemRepo.fetch_assigned_todo_item(form.todo_item_id.data, form.assign_to.data)
             if todo_item:
+                logging.debug(f"Assignee already exists for item {form.todo_item_id.data}")
                 return HttpResponseHandler.exist()
                 
             user_id = get_current_user_id()
@@ -127,3 +129,43 @@ class TodoItemData:
         })
         return HttpResponseHandler.success(message="Todo Item Fetched Successfully", **result)
         
+    @staticmethod
+    def add_comment_todo_item(form):
+        """
+            Add comment todo item follower
+        """
+        if not form.validate_on_submit():
+            logging.debug(messages.INVALID_FORM_MESSAGE, form.errors)
+            raise HttpException(messages.INVALID_FORM_MESSAGE,
+                                constants.BAD_REQUEST, 400)
+
+        try:
+            todo_item = TodoItemRepo.fetch_todo_item(form.todo_item_id.data)
+            if not todo_item:
+                return HttpResponseHandler.invalid_request_entity()
+                
+            creator_assignee = []
+            for item in todo_item:
+                creator_assignee.append(item.user_id_fk)
+            
+            todo_item_assignee = TodoItemRepo.fetch_assignee_todo_item(form.todo_item_id.data)
+            for assignee in todo_item_assignee:
+                creator_assignee.append(assignee.assigned_user_id_fk)
+
+
+            logging.info(f'Creator assinee users {creator_assignee}')
+            user_id = get_current_user_id()
+            if user_id not in list(set(creator_assignee)):
+                return HttpResponseHandler.bad_request(
+                    message="Only creator or assignee allowed to add comments.")
+
+            data = {
+                "comment": form.comment.data
+            }
+            TodoItemRepo.post_comment_todo_item(form.todo_item_id.data, data)
+
+            return HttpResponseHandler.success(messages="Comment Added Successfully")
+        except Exception as ex:
+            logging.debug(f'Error while assigning item to users {ex}')
+            raise HttpException(
+                f"Server Error!", constants.DEFAULT_ERROR_CODE, constants.DEFAULT_HTTP_ERROR_CODE) from ex

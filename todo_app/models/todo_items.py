@@ -35,6 +35,7 @@ class TblTodoItems(DatetimeMixin, handler.Base):
     start_date = Column(TIMESTAMP, nullable=True)
     due_date = Column(TIMESTAMP, nullable=True)
     status = Column(String(140)) 
+    comment = Column(String(1024)) 
 
 
     def __repr__(self):

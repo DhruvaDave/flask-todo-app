@@ -29,3 +29,8 @@ class TodoItemForm(Form):
 class AssignTodoItemForm(Form):
     todo_item_id = IntegerField(validators=[DataRequired()])
     assign_to = ListField([DataRequired()])
+
+
+class AddCommentTodoItemForm(Form):
+    todo_item_id = IntegerField(validators=[DataRequired()])
+    comment = StringField([DataRequired()])

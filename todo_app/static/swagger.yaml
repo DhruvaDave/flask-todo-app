@@ -211,7 +211,13 @@ components:
         description:
           type: string
         status:
-          type: string
+          type: string    
+        user_todo_list_id:
+          type: integer
+        parent_todo_item_id:
+          type: integer
+        assign_to:
+          type: list
 
     assigntodoitemRequest:
       type: object

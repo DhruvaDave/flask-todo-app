@@ -23,6 +23,7 @@ class TodoItemForm(Form):
     status = StringField(validators=[DataRequired()])
     parent_todo_item_id = IntegerField()
     assign_to = ListField()
+    comment = StringField()
 
 
 
